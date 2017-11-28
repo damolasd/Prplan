@@ -11,9 +11,12 @@ app.route('/Projects/ProjectId')
 	.get(controller.list_items)
 	.post(controller.update_project)
 	.post(controller.create_item)
-	.post(controller.update item)
-	.delete(controller.delete_item);
 	.delete(controller.delete_project);
+
+
+app.route('/Projects/ProjectId/ItemId')
+	.post(controller.update item)
+	.delete(controller.delete_item)
 
 
 

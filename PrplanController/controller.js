@@ -19,9 +19,20 @@ exports.create_project = function(req, res) {
 	});
 };
 
+exports.create_item = function(req, res) {
+	Project.items.push(req.body);
+	Project.save(function (err) {
+		if (err) return handleError(err)
+		console.log('Successfully')
+		})
+	
+}
+
 exports.list_items = function(req, res) {
 	Project.findById(req.params.ProjectId, function(err, project) {
-
+		if (!err) {
+			res.json(project.items)
+		}
 	});
 };
 
@@ -44,4 +55,24 @@ exports.delete_project = function(req, res) {
 			res.send(err)
 		res.json({message: 'Project deleted'});
 	});
+};
+
+exports.update_item = function(req, res) {
+	Project.item.findOneAndUpdate({_id: req.params.ItemId}, req.body, {new:true}, function(err, project) {
+
+		if (err)
+			res.send(err)
+		res.json(project)
+
+	
+	});
+};
+
+exports.delete_item = function(req, res) {
+	Project.items.remove(_id: req.params.ItemId);
+	Project.save(function (err) {
+		if (err) return handleError(err);
+		});
+
+	
 };
