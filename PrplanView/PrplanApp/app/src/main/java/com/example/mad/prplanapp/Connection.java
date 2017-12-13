@@ -4,29 +4,34 @@ package com.example.mad.prplanapp;
  * Created by M.A.D on 09/12/2017.
  */
 
+import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.BufferedInputStream;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.StringReader;
+import java.net.ProtocolException;
 import java.net.URI;
 import java.net.MalformedURLException;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URISyntaxException;
+import java.net.URL;
 
 public class Connection {
     HttpURLConnection conn = null;
-    URI baseurl =  new URI("http://localhost:3000");
+    static String baseUrlString = "http://localhost:3000";
+
+
     public static void main(String[] args) {
         HttpURLConnection conn = null;
         BufferedReader reader = null;
 
         try{
-
-
-            conn = (HttpURLConnection) baseurl.openConnection();
+            URL baseURL = new URL(baseUrlString);
+            conn = (HttpURLConnection)baseURL.openConnection();
             conn.connect();
 
             InputStream stream = conn.getInputStream();
@@ -41,9 +46,7 @@ public class Connection {
             }
         }catch (MalformedURLException e) {
             e.printStackTrace();
-        } catch (URISyntaxException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
+        }  catch (IOException e) {
             e.printStackTrace();
         }finally {
             if (conn!=null) {
@@ -61,21 +64,61 @@ public class Connection {
 
     }
 
-    public JSONObject getProjects() {
-        String getProjectsString = "Projects";
+    public JSONObject getProjects() throws ProtocolException {
+        String response = null;
+        String ProjectsString = "/Projects";
+        StringBuffer buffer = new StringBuffer();
+        buffer.append(baseUrlString);
+        buffer.append(ProjectsString);
         try {
-            URI url = new URI(getProjectsString);
-        } catch (URISyntaxException e) {
+            URL url = new URL(buffer.toString());
+            conn.setRequestMethod("GET");
+            conn.setRequestProperty("Content-Type", "application/json");
+            conn = (HttpURLConnection) url.openConnection();
+            // Read response
+            InputStream inputStream = new BufferedInputStream(conn.getInputStream());
+            BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream));
+            StringBuilder stringBuilder = new StringBuilder();
+            String line = "";
+            while ((line = reader.readLine()) != null) {
+                stringBuilder.append(line).append('\n');
+            }
+            inputStream.close();
+            response = stringBuilder.toString();
+
+        } catch (MalformedURLException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
             e.printStackTrace();
         }
-        conn.setRequestMehod("GET");
-        conn.setRequestProperty("Content-Type", "application/json");
+        JSONObject jsonObject = null;
+        if (response != null) {
+            try {
+                jsonObject = new JSONObject(response);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
 
+        return jsonObject;
     }
 
-    public PostProject() throws URISyntaxException {
-        conn.setRequestMehod("POST");
-        conn.setRequestProperty("Content-Type", "application/json");
+    public void PostProject() throws URISyntaxException, ProtocolException {
+        String ProjectsString = "/Projects";
+        StringBuffer buffer = new StringBuffer();
+        buffer.append(baseUrlString);
+        buffer.append(ProjectsString);
+        try {
+            URL url = new URL(buffer.toString());
+            conn.setRequestMethod("POST");
+            conn.setRequestProperty("Content-Type", "application/json");
+            conn = (HttpURLConnection)url.openConnection();
+        } catch (MalformedURLException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
     }
 
 
