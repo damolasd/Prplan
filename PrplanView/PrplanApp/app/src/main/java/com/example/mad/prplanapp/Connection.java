@@ -4,6 +4,8 @@ package com.example.mad.prplanapp;
  * Created by M.A.D on 09/12/2017.
  */
 
+import android.app.DatePickerDialog;
+
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -103,7 +105,7 @@ public class Connection {
         return jsonObject;
     }
 
-    public void PostProject() throws URISyntaxException, ProtocolException {
+    public void PostProject(String projectTitle, DatePickerDialog startDate, DatePickerDialog endDate) throws URISyntaxException, ProtocolException {
         String ProjectsString = "/Projects";
         StringBuffer buffer = new StringBuffer();
         buffer.append(baseUrlString);
