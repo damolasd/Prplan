@@ -11,6 +11,7 @@ import org.json.JSONObject;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedReader;
+import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.StringReader;
@@ -105,7 +106,7 @@ public class Connection {
         return jsonObject;
     }
 
-    public void PostProject(String projectTitle, DatePickerDialog startDate, DatePickerDialog endDate) throws URISyntaxException, ProtocolException {
+    public void PostProject(String projectTitle, int startYear, int startMonth , int startDay) throws URISyntaxException, ProtocolException {
         String ProjectsString = "/Projects";
         StringBuffer buffer = new StringBuffer();
         buffer.append(baseUrlString);
@@ -115,6 +116,15 @@ public class Connection {
             conn.setRequestMethod("POST");
             conn.setRequestProperty("Content-Type", "application/json");
             conn = (HttpURLConnection)url.openConnection();
+             //Send Post Request
+            conn.setDoOutput(true);
+            DataOutputStream outputStream = new DataOutputStream(conn.getOutputStream());
+            outputStream.writeBytes(projectTitle);
+            outputStream.writeByte(startYear);
+            outputStream.writeByte(startMonth);
+            outputStream.writeByte(startDay);
+            outputStream.flush();
+            outputStream.close();
         } catch (MalformedURLException e) {
             e.printStackTrace();
         } catch (IOException e) {
